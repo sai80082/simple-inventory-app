@@ -1,1 +1,1 @@
-# simple-shoppping-site
+# simple-shopping-site
