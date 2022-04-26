@@ -5,7 +5,7 @@
 </form>
 
 {% endblock %} {% block main %}
-<form class="searchinput" method="post">
+<form class="searchinput" method="get">
   <div class="mb-3">
     <input
       class="form-control"
@@ -14,18 +14,60 @@
     />
   </div>
 </form>
-<div class="container">
-</div>
+<div class="container"></div>
+<button class="add">
+  <img src="https://img.icons8.com/fluency/80/000000/plus-2-math.png" />
+</button>
+
 <script>
+  window.onload = async function () {
+    let response = await fetch("/search?q=" + input.value);
+    let items = await response.json();
+    let html = "";
+    items;
+    for (let i in items) {
+      let image = items[i].image.replace("<", "&lt;").replace("&", "&amp;");
+      let price = items[i].price.replace("<", "&lt;").replace("&", "&amp;");
+      let unit = items[i].unit.replace("<", "&lt;").replace("&", "&amp;");
+      html +=
+        "<div class='subcontainer'><h4>" +
+        i +
+        "</h4><img src = '/static/images/" +
+        image +
+        "'>" +
+        "<div class = 'unit'>" +
+        unit +
+        "</div>" +
+        "<div class = 'price'>" +
+        price +
+        "</div>" +
+        "</div>";
+    }
+    document.querySelector(".container").innerHTML = html;
+  };
   let input = document.querySelector("input");
   input.addEventListener("input", async function () {
     let response = await fetch("/search?q=" + input.value);
     let items = await response.json();
-    let html = "";items
+    let html = "";
+    items;
     for (let i in items) {
       let image = items[i].image.replace("<", "&lt;").replace("&", "&amp;");
+      let price = items[i].price.replace("<", "&lt;").replace("&", "&amp;");
+      let unit = items[i].unit.replace("<", "&lt;").replace("&", "&amp;");
       html +=
-        "<div class='subcontainer'>" + i +"<img src = '/static/images/"+image+"'>"+ "</div>";
+        "<div class='subcontainer'><h4>" +
+        i +
+        "</h4><img src = '/static/images/" +
+        image +
+        "'>" +
+        "<div class = 'unit'>" +
+        unit +
+        "</div>" +
+        "<div class = 'price'>" +
+        price +
+        "</div>" +
+        "</div>";
     }
     document.querySelector(".container").innerHTML = html;
   });
