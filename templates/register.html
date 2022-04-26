@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Log In
+{% endblock %}
+{% block nav %}
+<form action="/login">
+    <button type="submit" class="btn btn-primary">Login in</button>
+</form>
+{% endblock %}
+{% block main %}
+<h1 style="color: red;">{{message}}</h1>
+<form class="form-signin login" action="/register" method="post" style="max-width: 500px;" onsubmit="Validation()">
+    <h1 class="h3 mb-3 font-weight-normal">Register here</h1>
+    <input type="text" name="username" class="form-control username" placeholder="username" id="username" required
+        autofocus autocomplete="off">
+    <div id="username" class="valid-feedback">
+        Looks Good!
+    </div>
+    <div id="username" class="invalid-feedback">
+        Username already exists
+    </div>
+    <input type="password" name="password" class="form-control" placeholder="Password" id="password" required>
+    <div class="passvalidity" style="text-align: left; margin-left: 20px;">
+        <label id="passlowercase" class="validity" style="display: none; ">A lowercase letter</label>
+        <label id="passuppercase" class="validity" style="display: none; ">A uppercase letter</label>
+        <label id="passnumber" class="validity" style="display: none; ">A number</label>
+        <label id="passlength" class="validity" style="display: none; ">Min length of 8</label>
+    </div>
+
+    <input type="password" name="cpassword" id="cpassword" class="form-control" placeholder="retype Password" required>
+    <div class="passvalidity" style="text-align: left; margin-left: 20px;">
+        <label id="cpassvalid" class="validity" style="display: none; ">Password Doesn't match</label>
+    </div>
+
+    <button class="btn btn-lg btn-primary btn-block regbutton" type="submit" disabled>Register</button>
+</form>
+
+<script>
+    var username = document.querySelector(".username");
+    var validation = 1;
+    username.onkeyup = function () {
+        if (username.value != "") {
+            let response = fetch('/uservalid?q=' + username.value).then((response) => {
+                response.json().then((data) => {
+                    if (data["value"] == 1) {
+                        username.classList.remove("is-valid");
+                        username.classList.add("is-invalid");
+                    }
+                    else {
+                        username.classList.remove("is-invalid");
+                        username.classList.add("is-valid");
+
+                    }
+
+                });
+            });
+        }
+        else {
+            username.classList.remove("is-invalid");
+            username.classList.remove("is-valid")
+        }
+    }
+    var passin = document.getElementById("password");
+    var cpassin = document.getElementById("cpassword");
+    var button = document.querySelector('.regbutton');
+    var passvalid = document.querySelectorAll(".validity");
+    passin.onkeyup = function () {
+        for (let i = 0; i < passvalid.length; i++) {
+            passvalid[i].style.display = "block";
+        }
+
+        if (passin.value.match(/[a-z]/g)) {
+
+            document.getElementById("passlowercase").style.color = "green";
+        } else {
+
+            document.getElementById("passlowercase").style.color = "red";
+        }
+        if (passin.value.match(/[A-Z]/g)) {
+            document.getElementById("passuppercase").style.color = "green";
+        } else {
+            document.getElementById("passuppercase").style.color = "red";
+        }
+        if (passin.value.match(/[0-9]/g)) {
+            document.getElementById("passnumber").style.color = "green";
+        } else {
+            document.getElementById("passnumber").style.color = "red";
+        }
+        if (passin.value.length >= 8) {
+            document.getElementById("passlength").style.color = "green";
+        } else {
+            document.getElementById("passlength").style.color = "red";
+        }
+
+
+    }
+
+    cpassin.onkeyup = function () {
+        if ((passin.value == "" && cpassin.value == "") && (!(passin.value.match(/[a-z]/g) && passin.value.match(/[A-Z]/g) && passin.value.match(/[0-9]/g) && (passin.value.length >= 8)))) {
+            button.disabled = true;
+        }
+        else if (passin.value != cpassin.value) {
+            document.getElementById("cpassvalid").style.display = "block";
+            document.getElementById("cpassvalid").style.color = "red";
+            button.disabled = true;
+        }
+
+        else if (passin.value == cpassin.value) {
+            document.getElementById("cpassvalid").style.display = "none";
+            button.disabled = false;
+        }
+    }
+    function Validation() {
+        if (validation == 1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+{% endblock %}
