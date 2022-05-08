@@ -2,6 +2,7 @@ from flask import Flask, jsonify, redirect, render_template, request, session
 from flask_session import Session
 import sqlite3
 from flask_bcrypt import Bcrypt
+import os
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -11,6 +12,8 @@ Session(app)
 connection = sqlite3.connect("data.db", check_same_thread=False)
 connection.row_factory = sqlite3.Row
 db = connection.cursor()
+
+app.config['UPLOAD_FOLDER'] = "/trial"
 
 
 def dbselect(query, data=""):
@@ -77,6 +80,7 @@ def register():
         result = dbselect("SELECT * FROM users WHERE username = ?;",
                           [request.form.get("username")])
         session["user_id"] = result[0]["id"]
+        os.mkdir("userdata/"+str(session["user_id"]) + "/")
         return redirect("/")
     return render_template("register.html")
 
@@ -101,14 +105,46 @@ def uservalid():
 def search():
     query = request.args.get("q")
     result = dbselect(
-        "SELECT * FROM menu WHERE itemname LIKE ?", ["%"+query+"%"])
+        "SELECT itemname,image,units FROM menu WHERE itemname LIKE ? AND userid = ?", ["%"+query+"%", session["user_id"]])
+
     data = {}
     for i in result:
         temp = list(i)
-        data[temp[0]] = {"image": temp[1], "price": temp[2], "unit": temp[3]}
+        data[temp[0]] = {"image": temp[1], "units": temp[2]}
     return jsonify(data)
 
 
+@app.route("/delete/", methods=["GET", "POST"])
+def delete():
+    value = request.args.get("delete")
+    result = dbselect(
+        "SELECT image FROM menu WHERE itemname == ? AND userid = ?", [value, session["user_id"]])
+    file = list(result[0])[0]
+    os.remove("static/userdata/"+file)
+    db.execute("DELETE FROM menu WHERE itemname = ? AND userid = ?",
+               [value, session["user_id"]])
+    connection.commit()
+
+    return redirect("/")
+
+
+@app.route('/add', methods=["GET", "POST"])
+def upload():
+    if request.method == 'POST':
+        app.config['UPLOAD_FOLDER'] = "static/userdata/" + \
+            str(session["user_id"])+"/"
+        name = request.form.get("filename")
+        numitems = request.form.get("numitems")
+        f = request.files['file']
+        extension = os.path.splitext(f.filename)[-1]
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], name+extension))
+        db.execute("INSERT INTO menu (itemname,image,units,userid) VALUES (?,?,?,?)", [
+                   name, str(session["user_id"])+"/"+name+extension, numitems, session["user_id"]])
+        connection.commit()
+        return redirect("/")
+    else:
+        return render_template("add.html")
+
 
 if __name__ == '__main__':
-   app.run('0.0.0.0',80)
+    app.run('0.0.0.0', 80)

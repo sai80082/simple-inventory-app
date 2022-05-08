@@ -1,0 +1,46 @@
+{% extends "layout.html" %} {% block title %} Add {% endblock %} {% block nav %}
+<form action="/logout">
+  <button type="submit" class="btn btn-danger">Logout</button>
+</form>
+
+{% endblock %} {% block main %}
+<style>
+    .btn-primary,.btn-warning{
+        margin: 10px;
+    }
+    .addform input{
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 10px;
+    }
+</style>
+<form action="/add" method="post" enctype="multipart/form-data" class="addform">
+  <input
+    type="text"
+    class="form-control"
+    name="filename"
+    style="max-width: 500px"
+    placeholder="itemname"
+  />
+  <input
+    type="file"
+    class="form-control"
+    id="customFile"
+    accept=".jpg,.jpeg,.png"
+    style="max-width: 500px"
+    name="file"
+  />
+  <input
+    type="number"
+    class="form-control"
+    style="max-width: 500px"
+    name="numitems"
+    placeholder="Enter number of items"
+  />
+  <button type="submit" class="btn btn-primary">Add</button>
+</form>
+<form action="/">
+  <button type="submit" class="btn btn-warning">Cancel</button>
+</form>
+{% endblock %}

@@ -5,6 +5,7 @@
 </form>
 
 {% endblock %} {% block main %}
+<h2 style="color: red">{{error}}</h2>
 <form class="searchinput" method="get">
   <div class="mb-3">
     <input
@@ -15,9 +16,11 @@
   </div>
 </form>
 <div class="container"></div>
-<button class="add">
-  <img src="https://img.icons8.com/fluency/80/000000/plus-2-math.png" />
-</button>
+<form action="/add">
+  <button class="add" type="submit">
+    <img src="https://img.icons8.com/fluency/80/000000/plus-2-math.png" />
+  </button>
+</form>
 
 <script>
   window.onload = async function () {
@@ -27,20 +30,19 @@
     items;
     for (let i in items) {
       let image = items[i].image.replace("<", "&lt;").replace("&", "&amp;");
-      let price = items[i].price.replace("<", "&lt;").replace("&", "&amp;");
-      let unit = items[i].unit.replace("<", "&lt;").replace("&", "&amp;");
+      let unit = items[i].units.replace("<", "&lt;").replace("&", "&amp;");
       html +=
         "<div class='subcontainer'><h4>" +
         i +
-        "</h4><img src = '/static/images/" +
+        "</h4><img src = 'static/userdata/" +
         image +
-        "'>" +
-        "<div class = 'unit'>" +
+        "' style='height: 100%; width: 100%; object-fit: cover;;border-radius:10px;max-height:150px'>" +
+        "<div class = 'unit'> number of units: " +
         unit +
         "</div>" +
-        "<div class = 'price'>" +
-        price +
-        "</div>" +
+        "<form action='/delete' method='GET'><button type='submit' name='delete' value='" +
+        i +
+        "' class='btn btn-danger'>Delete</button></form>" +
         "</div>";
     }
     document.querySelector(".container").innerHTML = html;
@@ -53,20 +55,19 @@
     items;
     for (let i in items) {
       let image = items[i].image.replace("<", "&lt;").replace("&", "&amp;");
-      let price = items[i].price.replace("<", "&lt;").replace("&", "&amp;");
-      let unit = items[i].unit.replace("<", "&lt;").replace("&", "&amp;");
+      let unit = items[i].units.replace("<", "&lt;").replace("&", "&amp;");
       html +=
         "<div class='subcontainer'><h4>" +
         i +
-        "</h4><img src = '/static/images/" +
+        "</h4><img src = 'static/userdata/" +
         image +
-        "'>" +
-        "<div class = 'unit'>" +
+        "'  style='height: 100%; width: 100%; object-fit: contain;border-radius:10px;max-height:150px'>" +
+        "<div class = 'unit'> number of units: " +
         unit +
         "</div>" +
-        "<div class = 'price'>" +
-        price +
-        "</div>" +
+        "<form action='/delete' method='GET'><button type='submit' name='delete' value='" +
+        i +
+        "' class='btn btn-danger'>Delete</button></form>" +
         "</div>";
     }
     document.querySelector(".container").innerHTML = html;
