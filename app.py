@@ -80,7 +80,7 @@ def register():
         result = dbselect("SELECT * FROM users WHERE username = ?;",
                           [request.form.get("username")])
         session["user_id"] = result[0]["id"]
-        os.mkdir("userdata/"+str(session["user_id"]) + "/")
+        os.mkdir("static/userdata/"+str(session["user_id"]) + "/")
         return redirect("/")
     return render_template("register.html")
 
