@@ -1,6 +1,4 @@
 # simple-Inventory-app
-#### Video Demo:  <URL HERE>
-#### Description:
 This is a simple inventory management app can be used for keeping track of your items in kitchen,garage,etc
 
 - There are 4 languages used in this project HTMl,CSS,Javascript and Python (for backend)
